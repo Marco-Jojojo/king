@@ -56,7 +56,7 @@ public class Actividad implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date fechaFin;
     
-    @OneToMany(mappedBy="actividad", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="actividad", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Set<Tarea> tareas;
     
     public Actividad() {

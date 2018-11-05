@@ -31,7 +31,6 @@ public abstract class ServiceBase {
      */
     public <T> void copiarValores(Set<T> existenteModelo, Set<T> nuevoModelo) {
     	List<T> copiaExistenteModelo = new ArrayList<>(existenteModelo);
-    	
     	for(T bdModelo : copiaExistenteModelo) {
     		boolean existe = false;
     		for(T nuevo : nuevoModelo) {

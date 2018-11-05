@@ -65,7 +65,7 @@ public class Proyecto implements Serializable{
     @Column(name = "POR_AVANCE")
     private Double porcentajeAvance;
     
-    @OneToMany(mappedBy="proyecto", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="proyecto", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Set<DetalleProyecto> detallesProyecto;
     
     public Proyecto() {

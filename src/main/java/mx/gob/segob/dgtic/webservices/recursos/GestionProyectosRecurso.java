@@ -87,7 +87,6 @@ public class GestionProyectosRecurso extends RecursoBase{
 		if (proyectoDB == null){
 			return ResponseJSONGenericoUtil.getRespuestaWarning(StatusResponse.OK, null, "Proyecto no encontrado");
 		}
-		
 		gestionProyectosService.copiarValoresProyecto(proyectoDB, proyecto);
 		proyecto = gestionProyectosService.actualizarProyecto(proyectoDB);
 

@@ -97,7 +97,7 @@ public class DetalleProyecto implements Serializable{
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date fechaCierre;
     
-    @OneToMany(mappedBy="detalleProyecto", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="detalleProyecto", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Set<Objetivo> objetivos;
     
     //FIXME: Se debe hacer referencia a DetalleProyecto en Presupuesto (bidireccional). Falla al no encontrar la relación.

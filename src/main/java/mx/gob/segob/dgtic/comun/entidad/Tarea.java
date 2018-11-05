@@ -56,7 +56,7 @@ public class Tarea implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date fechaFin;
     
-    @OneToMany(mappedBy="tarea", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="tarea", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Set<SubTarea> subTareas;
     
     public Tarea() {
