@@ -1,0 +1,8 @@
+target/
+
+.classpath
+.project
+.settings/
+jboss-web.xml
+nbactions.xml
+nb-configuration.xml
