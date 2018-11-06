@@ -1,11 +1,13 @@
 package mx.gob.segob.dgtic.business.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -83,7 +85,7 @@ public class GestionProyectosServiceImpl extends ServiceBase implements GestionP
 	}
 
 	@Override
-	public void copiarValoresProyecto(Proyecto viejo, Proyecto nuevo) {
+	public void copiarValoresProyecto(Proyecto viejo, Proyecto nuevo, Map<String, Byte[]> archivos) {
 		if(nuevo.getId() != null)
 			viejo.setId(nuevo.getId());
 		if(nuevo.getUsuario() != null)
@@ -99,24 +101,29 @@ public class GestionProyectosServiceImpl extends ServiceBase implements GestionP
 		if(nuevo.getPorcentajeAvance() != null)
 			viejo.setPorcentajeAvance(nuevo.getPorcentajeAvance());
 		copiarValores(viejo.getDetallesProyecto(), nuevo.getDetallesProyecto());
-		asignaciones(viejo);
+		asignaciones(viejo, archivos);
 	}
 
 	/**
-	 * Guarda el valor bidireccional en las colecciones de la entidad (ya que el Json no contiene este valor, debido a que es excluído).
+	 * Guarda el valor bidireccional en las colecciones de la entidad (ya que el Json no contiene este valor, debido a que es excluído)
+	 * y guarda el archivo correspondiente siguiendo una convención de nombre del parámetro en la forma "archivo-<entidad>-<id>.
 	 * @param proyectoEnBD
 	 */
-	private void asignaciones(Proyecto proyectoEnBD) {
+	private void asignaciones(Proyecto proyectoEnBD, Map<String, Byte[]> archivos) {
 		for(DetalleProyecto detalle : proyectoEnBD.getDetallesProyecto()) {
 			detalle.setProyecto(proyectoEnBD);
 			for(Objetivo objetivo : detalle.getObjetivos()) {
 				objetivo.setDetalleProyecto(detalle);
+				objetivo.setArchivo(ArrayUtils.toPrimitive(archivos.get("archivo-objetivo-"+objetivo.getClave())));
 				for(Actividad actividad : objetivo.getActividades()) {
 					actividad.setObjetivo(objetivo);
+					actividad.setArchivo(ArrayUtils.toPrimitive(archivos.get("archivo-actividad-"+actividad.getId())));
 					for(Tarea tarea : actividad.getTareas()) {
 						tarea.setActividad(actividad);
+						tarea.setArchivo(ArrayUtils.toPrimitive(archivos.get("archivo-tarea-"+tarea.getId())));
 						for(SubTarea subTarea : tarea.getSubTareas()) {
 							subTarea.setTarea(tarea);
+							subTarea.setArchivo(ArrayUtils.toPrimitive(archivos.get("archivo-subTarea-"+subTarea.getId())));
 						}
 					}
 				}

@@ -1,6 +1,7 @@
 package mx.gob.segob.dgtic.business.service;
 
 import java.util.List;
+import java.util.Map;
 
 import mx.gob.segob.dgtic.comun.entidad.Proyecto;
 import mx.gob.segob.dgtic.comun.transport.dto.proyectos.ProyectoDto;
@@ -39,5 +40,5 @@ public interface GestionProyectosService {
 	 * @param viejo
 	 * @param nuevo
 	 */
-	void copiarValoresProyecto(Proyecto viejo, Proyecto nuevo);
+	void copiarValoresProyecto(Proyecto viejo, Proyecto nuevo, Map<String, Byte[]> archivos);
 }

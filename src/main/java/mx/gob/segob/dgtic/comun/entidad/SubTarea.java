@@ -42,6 +42,7 @@ public class SubTarea implements Serializable {
 	
 	@Lob
 	@Column(name = "ARC_STAREA")
+	@Excluir
     private byte[] archivo;
 	
 	@Column(name = "FEC_INISTAR")

@@ -47,6 +47,7 @@ public class Tarea implements Serializable {
 	
 	@Lob
 	@Column(name = "ARC_TAREA")
+	@Excluir
     private byte[] archivo;
 	
 	@Column(name = "FEC_INITAR")

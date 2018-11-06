@@ -47,6 +47,7 @@ public class Actividad implements Serializable {
 	
 	@Lob
 	@Column(name = "ARC_ACTIVIDAD")
+	@Excluir
     private byte[] archivo;
 	
 	@Column(name = "FEC_INIACT")

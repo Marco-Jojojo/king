@@ -55,6 +55,7 @@ public class Objetivo implements Serializable {
 	
 	@Lob
 	@Column(name = "ARC_OBJESP")
+	@Excluir
     private byte[] archivo;
 	
 	@Column(name = "FEC_INIOBJESP")
