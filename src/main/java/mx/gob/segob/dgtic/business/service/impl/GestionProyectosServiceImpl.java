@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javassist.bytecode.ByteArray;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -59,7 +61,8 @@ public class GestionProyectosServiceImpl extends ServiceBase implements GestionP
 	
 	@Override
 	@Transactional
-	public Proyecto registrarProyecto(Proyecto proyecto) {
+	public Proyecto registrarProyecto(Proyecto proyecto, Map<String, Byte[]> archivos) {
+		asignaciones(proyecto, archivos);
 		return persisteProyecto(proyecto);
 	}
 
@@ -114,16 +117,32 @@ public class GestionProyectosServiceImpl extends ServiceBase implements GestionP
 			detalle.setProyecto(proyectoEnBD);
 			for(Objetivo objetivo : detalle.getObjetivos()) {
 				objetivo.setDetalleProyecto(detalle);
-				objetivo.setArchivo(ArrayUtils.toPrimitive(archivos.get("archivo-objetivo-"+objetivo.getClave())));
+				Byte[] archivoObjetivo = archivos.get("archivo-objetivo-"+objetivo.getClave());
+				if(archivoObjetivo == null) {
+					archivoObjetivo = new Byte[0];
+				}
+				objetivo.setArchivo(ArrayUtils.toPrimitive(archivoObjetivo));
 				for(Actividad actividad : objetivo.getActividades()) {
 					actividad.setObjetivo(objetivo);
-					actividad.setArchivo(ArrayUtils.toPrimitive(archivos.get("archivo-actividad-"+actividad.getId())));
+					Byte[] archivoActividad = archivos.get("archivo-actividad-"+actividad.getId());
+					if(archivoActividad == null) {
+						archivoActividad = new Byte[0];
+					}
+					actividad.setArchivo(ArrayUtils.toPrimitive(archivoActividad));
 					for(Tarea tarea : actividad.getTareas()) {
 						tarea.setActividad(actividad);
-						tarea.setArchivo(ArrayUtils.toPrimitive(archivos.get("archivo-tarea-"+tarea.getId())));
+						Byte[] archivoTarea = archivos.get("archivo-tarea-"+tarea.getId());
+						if(archivoTarea == null) {
+							archivoTarea = new Byte[0];
+						}
+						tarea.setArchivo(ArrayUtils.toPrimitive(archivoTarea));
 						for(SubTarea subTarea : tarea.getSubTareas()) {
 							subTarea.setTarea(tarea);
-							subTarea.setArchivo(ArrayUtils.toPrimitive(archivos.get("archivo-subTarea-"+subTarea.getId())));
+							Byte[] archivoSubTarea = archivos.get("archivo-subTarea-"+subTarea.getId());
+							if(archivoSubTarea == null) {
+								archivoSubTarea = new Byte[0];
+							}
+							subTarea.setArchivo(ArrayUtils.toPrimitive(archivoSubTarea));
 						}
 					}
 				}

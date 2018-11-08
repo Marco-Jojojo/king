@@ -2,6 +2,8 @@ package mx.gob.segob.dgtic.webservices.recursos;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,14 +78,32 @@ public class GestionProyectosRecurso extends RecursoBase{
 	
 	@POST
 	@Path("/proyectos")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	//@Auditable(modulo="GESTION_PROYECTOS", guardarParametrosEntrada=true)
 	@PermitAll
-	public Response agregarProyecto(@RequestBody Proyecto proyecto) {
-		Proyecto nuevoProyecto = gestionProyectosService.registrarProyecto(proyecto);
+	public Response agregarProyecto(MultipartFormDataInput input) throws IOException {
+		Proyecto proyecto = input.getFormDataPart("proyecto", new GenericType<Proyecto>(){});
+		Map<String, List<InputPart>> mapaPartes = input.getFormDataMap();
+		Map<String, Byte[]> archivosEnBytes = new HashMap<>();
+		for (String llave : mapaPartes.keySet()) {
+			if(llave.startsWith("archivo")) {
+				Byte[] objetivoArchivo = obtieneBytesDeArchivo(mapaPartes, llave);
+				archivosEnBytes.put(llave, objetivoArchivo);
+				//FIXME: Lo ideal es tener un campo que guarde el nombre del archivo para poder descargarlo con su extensión adecuada.
+			}
+		}
+		Proyecto nuevoProyecto = null;
+		try {
+			nuevoProyecto = gestionProyectosService.registrarProyecto(proyecto, archivosEnBytes);
+		} catch (Exception sqlE) {
+			List<String> errores = new ArrayList<>();
+			String error = obtieneError(sqlE);
+			errores.add(error);
+			return ResponseJSONGenericoUtil.getRespuestaWarning(StatusResponse.OK, errores, "ERROR");
+		}
 	    return ResponseJSONGenericoUtil.getRespuestaExito(StatusResponse.OK, nuevoProyecto);
 	}
-	
+
 	@PUT
 	@Path("/proyectos/{clave}")
 	@Consumes({MediaType.MULTIPART_FORM_DATA})
@@ -143,4 +163,19 @@ public class GestionProyectosRecurso extends RecursoBase{
 		return "unknown";
 	}
 
+	private String obtieneError(Exception sqlE) {
+		String error = sqlE.getMessage();
+		if(sqlE.getMessage().contains("cannot insert NULL into")) {
+			if(sqlE.getMessage().contains("D_OBJESP")) {
+				error = "Faltan campos obligatorios en Objetivos. Favor de verificarlo.";
+			} else if(sqlE.getMessage().contains("D_ACTIVIDAD")) {
+				error = "Faltan campos obligatorios en Actividades. Favor de verificarlo.";
+			} else if(sqlE.getMessage().contains("D_TAREA")) {
+				error = "Faltan campos obligatorios en Tareas. Favor de verificarlo.";
+			} else if(sqlE.getMessage().contains("D_STAREA")) {
+				error = "Faltan campos obligatorios en Sub-Tareas. Favor de verificarlo.";
+			}
+		}
+		return error;
+	}
 }

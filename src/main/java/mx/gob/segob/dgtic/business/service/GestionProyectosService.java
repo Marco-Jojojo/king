@@ -13,7 +13,7 @@ public interface GestionProyectosService {
 	 * @param proyecto
 	 * @return Indica si ha sido guardado con éxito o no.
 	 */
-	Proyecto registrarProyecto(Proyecto proyecto);
+	Proyecto registrarProyecto(Proyecto proyecto, Map<String, Byte[]> archivos);
 	
 	/**
 	 * Actualiza un proyecto existente.
